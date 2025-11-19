@@ -1,0 +1,690 @@
+Question 1)Addition,multiplcation of matrix
+
+
+a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+b = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+
+def addition():
+    result = []
+    for i in range(len(a)):
+        row = []
+        for j in range(len(a[0])):
+            row.append(a[i][j] + b[i][j])
+        result.append(row)
+    print("Addition:")
+    print(result)
+
+def multiplication():
+    result = []
+    for i in range(len(a)):
+        row = []
+        for j in range(len(b[0])):  # corrected to b[0], not b
+            mul = 0
+            for k in range(len(b)):
+                mul += a[i][k] * b[k][j]
+            row.append(mul)
+        result.append(row)
+    print("Multiplication:")
+    print(result)
+
+def scalar():
+    result = []
+    scalar = 1
+    for i in range(len(a)):
+        row = []
+        for j in range(len(a[0])):
+            row.append(a[i][j] * scalar)
+        result.append(row)
+    print("Scalar Multiplication by", scalar)
+    print(result)
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+2)Gaussian elimination
+
+def gaussian_elimination(matrix):
+    n = len(matrix)  
+       for i in range(n):
+                pivot = matrix[i][i]
+        for j in range(i, n + 1):  
+            matrix[i][j] /= pivot
+
+        
+        for k in range(i + 1, n):  
+            factor = matrix[k][i]
+            for j in range(i, n + 1):
+                matrix[k][j] -= factor * matrix[i][j]
+
+ 
+    x = [0] * n
+    for i in range(n - 1, -1, -1): 
+        x[i] = matrix[i][n]  
+        for j in range(i + 1, n):  
+            x[i] -= matrix[i][j] * x[j]
+
+    return x
+
+
+
+A = [
+    [1.0, 1.0, 1.0, 6.0],    
+    [0.0, 2.0, 5.0, -4.0],   
+    [2.0, 5.0, -1.0, 27.0]   
+]
+
+solution = gaussian_elimination(A)
+print("Solution:", solution)
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Question 3)eigen value,vector
+
+import math
+
+def eigenv(m):
+    if len(m) != 2 or len(m[0]) != 2 or len(m[1]) != 2:
+        print("Only 2x2 matrices are supported.")
+        return
+
+    a, b, c, d = m[0][0], m[1][0], m[0][1], m[1][1]
+    trace = a + d
+    det = a * d - b * c
+    disc = trace**2 - 4 * det
+
+    if disc < 0:
+        print("Imaginary eigenvalues.")
+        return None
+    else:
+        sqrt_disc = math.sqrt(disc)
+        l1 = (trace + sqrt_disc) / 2
+        l2 = (trace - sqrt_disc) / 2
+
+    def vector(l):
+        if (a - l) != 0:
+            v1 = -b / (a - l)
+        else:
+            v1 = 1
+        return [v1, 1]
+
+    v1 = vector(l1)
+    v2 = vector(l2)
+
+    print("Eigenvalue λ1:", l1)
+    print("Eigenvalue λ2:", l2)
+    print("Eigenvector for λ1:", v1)
+    print("Eigenvector for λ2:", v2)
+
+# Example usage with a 2x2 matrix
+A = [[4, 2],
+     [1, 3]]
+eigenv(A)
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Question 4)Binomial & normal
+
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+n = 10
+p = 0.5
+
+x_binomial = np.arange(0, n + 1)
+pmf_binomial = stats.binom.pmf(x_binomial, n, p)
+
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+plt.stem(x_binomial, pmf_binomial, use_line_collection=True)
+plt.title("Binomial Distribution (n=10, p=0.5)")
+plt.xlabel("Values")
+plt.ylabel("Probabilities")
+plt.grid(True)
+
+mu = 0
+sigma = 1
+
+x_normal = np.linspace(-4, 4, 100)
+pdf_normal = stats.norm.pdf(x_normal, mu, sigma)
+
+plt.subplot(1, 2, 2)
+plt.plot(x_normal, pdf_normal, color='green') 
+plt.title("Normal Distribution (μ=0, σ=1)")
+plt.xlabel("Values")
+plt.ylabel("Probability Density")
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+----------------------------------------------------------------------------------------------------------------------------
+
+5)JPMF
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+#jpmf matrix
+jpmf=np.array([[0.05,0.10,0.15],[0.2,0.1,0.1],[0.05,0.15,0.1]])
+print("sum of matrix",np.sum(jpmf))
+print("matrix",jpmf)
+
+#heatmap
+plt.figure(figsize=(6,5))
+sns.heatmap(jpmf,annot=True,cmap="Blues",cbar=True)
+plt.title("jpmf")
+plt.xlabel("Y")
+plt.ylabel("X")
+
+plt.xticks(np.arange(3)+0.5,["Y=1","Y=2","Y=3"])
+plt.yticks(np.arange(3)+0.5,["X=1","X=2","X=3"],rotation=0)
+plt.show()
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+6)Implement central limit theorem and plot probability distribution
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+population = np.random.uniform(0, 1, 100000)
+
+sample_size = 30        
+num_samples = 1000     
+sample_means = []
+
+for _ in range(num_samples):
+    sample = np.random.choice(population, sample_size)
+    sample_means.append(np.mean(sample))
+
+
+sample_means = np.array(sample_means)
+
+
+mean = np.mean(sample_means)
+std = np.std(sample_means)
+
+
+plt.figure(figsize=(10, 6))
+
+
+plt.hist(sample_means, bins=30, density=True, alpha=0.6, color='skyblue',
+         label="Sample Means (CLT)")
+
+x = np.linspace(min(sample_means), max(sample_means), 1000)
+pdf = norm.pdf(x, mean, std)
+plt.plot(x, pdf, 'r', linewidth=2, label="Normal Distribution (CLT Prediction)")
+
+plt.xlabel("Sample Mean")
+plt.ylabel("Probability Density")
+plt.title("Central Limit Theorem Simulation")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+ 
+---------------------------------------------------------------------------------------------------------------------------------------
+
+7)Genrate t&f distribution
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import f, t
+
+-
+df_t = 10
+x_t = np.linspace(-5, 5, 500)
+pdf_t = t.pdf(x_t, df_t)
+
+
+dfn, dfd = 5, 20  # Degrees of freedom numerator and denominator
+x_f = np.linspace(0, 5, 500)
+pdf_f = f.pdf(x_f, dfn, dfd)
+
+
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+plt.plot(x_t, pdf_t, 'b', label=f't-distribution (df={df_t})')
+plt.title("t-distribution")
+plt.xlabel("X")
+plt.ylabel("Probability Density")
+plt.legend()
+plt.grid(True)
+
+plt.subplot(1, 2, 2)
+plt.plot(x_f, pdf_f, 'r', label=f'F-distribution (dfn={dfn}, dfd={dfd})')
+plt.title("F-distribution")
+plt.xlabel("X")
+plt.ylabel("Probability Density")
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+----------------------------------------------------------------------------------------------------------------------------
+
+8)Simple Linear Regression
+
+import pandas as pd        
+import numpy as np          
+import matplotlib.pyplot as plt   
+from sklearn.model_selection import train_test_split   
+from sklearn.linear_model import LinearRegression       
+from sklearn.metrics import mean_squared_error, r2_score  
+
+data = pd.DataFrame({
+    "YearsExperience": [1.1, 1.3, 1.5, 2.0, 2.2, 2.9, 3.0, 3.2, 3.2, 3.7,
+                        3.9, 4.0, 4.1, 4.5, 4.9, 5.1, 5.3, 5.9, 6.0, 6.8,
+                        7.1, 7.9, 8.2, 8.7, 9.0, 9.5, 9.6, 10.3, 10.5, 10.8],
+    "Salary": [39343, 46205, 37731, 43525, 39891, 56642, 60150, 54445, 64445,
+               57189, 63218, 55794, 56957, 57081, 61111, 67938, 66029, 83088,
+               81363, 93940, 91738, 98273, 101302, 113812, 109431, 105582,
+               116969, 112635, 122391, 121872]
+})
+
+X = data[["YearsExperience"]]   # Independent variable
+y = data["Salary"]              # Dependent variable
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+mse = mean_squared_error(y_test, y_pred)  
+r2 = r2_score(y_test, y_pred)             
+
+print("Regression Equation: Salary = {:.2f} * YearsExperience + {:.2f}".format(
+    model.coef_[0], model.intercept_))
+
+print("Mean Squared Error (MSE):", mse)
+print("R² Score:", r2)
+
+plt.scatter(X, y, color='blue', label='Actual Data')
+
+plt.plot(X, model.predict(X), color='red', label='Regression Line')
+
+plt.title('Linear Regression: Salary vs Years of Experience')
+plt.xlabel('Years of Experience')
+plt.ylabel('Salary')
+plt.legend()
+
+plt.show()
+
+------------------------------------------------------------------------------------------------------------------------------
+
+9)Multiple Linear regression
+
+import pandas as pd                      
+import numpy as np                       
+import matplotlib.pyplot as plt         
+from sklearn.model_selection import train_test_split   
+from sklearn.linear_model import LinearRegression      
+from sklearn.metrics import mean_squared_error, r2_score 
+
+
+
+
+np.random.seed(42)          
+n = 120                     
+
+size = np.random.randint(500, 4000, n)      # Size of house in sqft
+bedrooms = np.random.randint(1, 6, n)       # Number of bedrooms
+bathrooms = np.random.randint(1, 4, n)      # Number of bathrooms
+distance = np.random.randint(1, 30, n)      # Distance from city center (in km)
+
+price = (
+    3000 * bedrooms +                      
+    5000 * bathrooms +                     
+    200 * size +                           
+    -1500 * distance +                     
+    np.random.randint(-10000, 10000, n)   
+)
+
+house_data = pd.DataFrame({
+    "Size_sqft": size,
+    "Bedrooms": bedrooms,
+    "Bathrooms": bathrooms,
+    "Distance_km": distance,
+    "Price": price
+})
+
+house_data.to_csv("house_prices.csv", index=False)
+print("Dataset saved as house_prices.csv")
+
+print(house_data.head())
+
+
+
+
+X = house_data[["Size_sqft", "Bedrooms", "Bathrooms", "Distance_km"]]
+
+y = house_data["Price"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+
+model = LinearRegression()           
+model.fit(X_train, y_train)          
+
+
+
+y_pred = model.predict(X_test)       
+
+mse = mean_squared_error(y_test, y_pred)   
+r2 = r2_score(y_test, y_pred)              
+
+print("\n🔹 Model Coefficients (Weights):", model.coef_) 
+print("🔹 Intercept (β₀):", model.intercept_)
+print("🔹 Mean Squared Error (MSE):", mse)
+print("🔹 R² Score:", r2)
+
+print("\nEquation:")
+print(
+    f"Price = {model.intercept_:.2f} "
+    f"+ ({model.coef_[0]:.2f} * Size_sqft) "
+    f"+ ({model.coef_[1]:.2f} * Bedrooms) "
+    f"+ ({model.coef_[2]:.2f} * Bathrooms) "
+    f"+ ({model.coef_[3]:.2f} * Distance_km)"
+)
+
+
+
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, y_pred, color="blue", alpha=0.6)        
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2)  
+plt.xlabel("Actual House Price")
+plt.ylabel("Predicted House Price")
+plt.title("Actual vs Predicted House Prices (Multiple Linear Regression)")
+plt.show()
+
+residuals = y_test - y_pred
+
+plt.figure(figsize=(8, 6))
+plt.scatter(y_pred, residuals, color="green", alpha=0.6)     
+plt.axhline(0, color="red", linestyle="--")                  
+plt.xlabel("Predicted Price")
+plt.ylabel("Residuals (Actual - Predicted)")
+plt.title("Residuals vs Predicted Prices")
+plt.show()
+
+-------------------------------------------------------------------------------------------------------------------------
+
+10)legrange interpolation
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sample data points (x, y)
+x = np.array([1, 2, 3, 4, 5])      
+y = np.array([2, 4, 1, 3, 7])       
+
+def lagrange_interpolation(x_points, y_points, x_val):
+ 
+
+    n = len(x_points)   
+    result = 0.0        
+
+    # Loop through each Lagrange basis polynomial L_i(x)
+    for i in range(n):
+        term = y_points[i]   # Start with y_i
+
+        # Compute product term for L_i(x)
+        for j in range(n):
+            if i != j:  # Skip when i == j
+                term *= (x_val - x_points[j]) / (x_points[i] - x_points[j])
+
+        result += term   # Add each L_i(x) * y_i to total
+
+    return result
+
+x_new = 2.5
+y_new = lagrange_interpolation(x, y, x_new)
+
+print(f"Interpolated value at x = {x_new} is y = {y_new}")
+
+x_range = np.linspace(min(x), max(x), 100)
+
+y_range = [lagrange_interpolation(x, y, xi) for xi in x_range]
+
+plt.scatter(x, y, color='red', label='Data Points')
+
+plt.plot(x_range, y_range, color='blue', label='Lagrange Interpolation')
+
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title("Lagrange Interpolation")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+------------------------------------------------------------------------------------------------------------------------------
+
+11)Newton’s Interpolation
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1, 2, 3, 4, 5])     # Independent variable (x-values)
+y = np.array([2, 4, 1, 3, 7])     # Dependent variable (y-values)
+
+def divided_difference_table(x, y):
+    n = len(x)
+    table = np.zeros((n, n))
+    table[:, 0] = y  # First column is y-values
+
+    for j in range(1, n):
+        for i in range(n - j):
+            table[i][j] = (table[i + 1][j - 1] - table[i][j - 1]) / (x[i + j] - x[i])
+    return table
+
+def newton_coefficients(x, y):
+    table = divided_difference_table(x, y)
+    return table[0, :]  # The first row gives the coefficients
+
+def newton_polynomial(x_data, coeffs, x_val):
+    n = len(coeffs)
+    result = coeffs[0]
+    term = 1.0
+
+    for i in range(1, n):
+        term *= (x_val - x_data[i - 1])
+        result += coeffs[i] * term
+    return result
+
+coeffs = newton_coefficients(x, y)
+x_new = 2.5
+y_new = newton_polynomial(x, coeffs, x_new)
+
+print("Newton’s Interpolation Coefficients:", coeffs)
+print(f"Interpolated value at x = {x_new} → y = {y_new}")
+
+x_plot = np.linspace(min(x), max(x), 100)
+y_plot = [newton_polynomial(x, coeffs, xi) for xi in x_plot]
+
+plt.figure(figsize=(7, 5))
+plt.plot(x_plot, y_plot, color='green', linestyle='--', label="Newton’s Interpolation Curve")
+plt.scatter(x, y, color='orange', s=70, label='Data Points')
+plt.scatter(x_new, y_new, color='red', s=80, label=f'Interpolated Point ({x_new}, {round(y_new,2)})')
+plt.title("Newton’s Interpolation")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.legend()
+plt.grid(True, linestyle=':')
+plt.show()
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+12)LU Decomposition for Linear Systems
+
+import numpy as np
+from scipy.linalg import lu, lu_factor, lu_solve
+
+print("=== LU Decomposition for Linear Systems ===")
+
+A = np.array([[2, 3, 1],
+              [4, 7, 3],
+              [6, 18, 8]], dtype=float)
+
+b = np.array([1, 3, 5], dtype=float)
+
+print("Matrix A:\n", A)
+print("Vector b:\n", b)
+
+P, L, U = lu(A)
+
+print("\nPermutation Matrix P:\n", P)
+print("Lower Triangular Matrix L:\n", L)
+print("Upper Triangular Matrix U:\n", U)
+
+lu_fact, piv = lu_factor(A)
+x = lu_solve((lu_fact, piv), b)
+
+print("\nSolution of system (x):\n", x)
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+13)Single Mean (Z-test)
+
+import numpy as np
+from scipy.stats import norm
+
+def z_test(sample, mu0, alpha, sigma=None, alternative='two-sided'):
+    sample = np.array(sample)
+    n = len(sample)
+    x_bar = np.mean(sample)
+
+    if sigma is None:
+        sigma = np.std(sample, ddof=1)  
+
+    z_stat = (x_bar - mu0) / (sigma / np.sqrt(n))
+
+    if alternative == "two-sided":
+        p_value = 2 * (1 - norm.cdf(abs(z_stat)))
+    elif alternative == "greater":
+        p_value = 1 - norm.cdf(z_stat)
+    elif alternative == "less":
+        p_value = norm.cdf(z_stat)
+    else:
+        raise ValueError("Alternative must be 'two-sided', 'greater', or 'less'.")
+
+    
+    reject = p_value <= alpha
+
+    return {
+        "Sample mean": x_bar,
+        "Hypothesized mean": mu0,
+        "z-statistic": z_stat,
+        "p-value": p_value,
+        "Conclusion": "Reject H₀" if reject else "Fail to reject H₀"
+    }
+
+
+
+data = [52, 50, 53, 49, 48, 51, 54, 50, 52, 49]
+mu0 = 50
+alpha = 0.05
+
+result = z_test(data, mu0, alpha, alternative='two-sided')
+
+
+for key, value in result.items():
+    print(f"{key}: {value}")
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+14) First-Order Markov Process Simulation
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def validate_transition_matrix(P):
+
+    
+    P = np.array(P)  # Convert input to NumPy array
+
+
+    if P.ndim != 2 or P.shape[0] != P.shape[1]:
+        raise ValueError("Transition matrix must be square (n x n).")
+
+   
+    if not np.allclose(P.sum(axis=1), 1):
+        raise ValueError("Each row of transition matrix must sum to 1.")
+
+    
+    if np.any(P < 0):
+        raise ValueError("Transition matrix cannot have negative probabilities.")
+
+    return P
+
+
+def n_step_transition_probability(P, n):
+   
+    P = validate_transition_matrix(P)               
+    return np.linalg.matrix_power(P, n)            
+
+
+
+if __name__ == "__main__":
+
+
+    P = np.array([
+        [0.7, 0.2, 0.1],
+        [0.1, 0.6, 0.3],
+        [0.4, 0.2, 0.4]
+    ])
+
+   
+    steps = [1, 2, 5, 10, 20]
+    results = {}
+
+
+    for n in steps:
+        Pn = n_step_transition_probability(P, n)   # Compute P^n
+        results[n] = Pn
+        print(f"\n{n}-step transition probability matrix:\n{Pn}")
+
+
+    state_names = ["S0", "S1", "S2"]
+    max_n = 20
+
+ 
+    evolution = [n_step_transition_probability(P, n)[0] for n in range(1, max_n + 1)]
+    evolution = np.array(evolution)
+
+    print("\nEvolution of transition probabilities from state S0:\n", evolution)
+
+  
+    plt.figure(figsize=(8, 5))
+
+  
+    for i in range(P.shape[0]):
+        plt.plot(
+            range(1, max_n + 1),        
+            evolution[:, i],             
+            marker="o",
+            label=f"P(S0→{state_names[i]})"
+        )
+
+    plt.xlabel("Steps (n)")
+    plt.ylabel("Transition Probability")
+    plt.title("n-step Transition Probability from State S0")
+    plt.legend()
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+
