@@ -1,0 +1,172 @@
+#include <iostream>
+using namespace std;
+
+class Library {
+private:
+    char div;
+    int Roll_No;
+    string F_Name;
+    string L_Name;
+    long int P_No;  
+    string gmail;
+    string Book_Name;
+
+public:
+    void read() {
+        cout << "Enter Division : ";
+        cin >> div;
+        cout << "Enter Roll Number : ";
+        cin >> Roll_No;
+        cout << "Enter First Name: ";
+        cin >> F_Name;
+        cout << "Enter Last Name : ";
+        cin >> L_Name;
+        cout << "Enter Phone Number : ";
+        cin >> P_No;
+        cout << "Enter Email ID : ";
+        cin >> gmail;
+        cout << "Enter Book Name : ";
+        cin >> Book_Name;
+    }
+
+    void display() {
+        cout << "\n----------------------------\n";
+        cout << "Division       : " << div << endl;
+        cout << "Roll Number    : " << Roll_No << endl;
+        cout << "First Name     : " << F_Name << endl;
+        cout << "Last Name      : " << L_Name << endl;
+        cout << "Phone Number   : " << P_No << endl;
+        cout << "Email ID       : " << gmail << endl;
+        cout << "Book Name      : " << Book_Name << endl;
+        cout << "----------------------------\n";
+    }
+
+    void update() {
+      cout << "Updating record...\n";
+      cout<<"Enter New Division : ";
+      cin>>div;
+      cout<<"Enter New Roll Number : ";
+      cin>>Roll_No;
+      cout<<"Enter New First Name: ";
+      cin>>F_Name;
+      cout<<"Enter New Last Name : ";
+      cin>>L_Name;
+      cout<<"Enter New Phone Number : ";
+      cin>>P_No;
+      cout<<"Enter New Email ID :";
+      cin>>gmail;
+      cout<<"Enter New Book Name : ";
+      cin>>Book_Name;
+    }
+
+    bool search(int RollNo) {
+        return (Roll_No == RollNo);
+    }
+};
+
+int main() {
+    Library a[20];
+    int No, i, n = 0;
+
+    do {
+        cout << "1) Read\n2) Display\n3) Insert\n4) Deletion\n5) Update\n6) Exit\n";
+        cout << "Enter Choice: ";
+        cin >> No;
+
+        switch (No) {
+            case 1: {
+                int count;
+                cout << "Enter number of students to add: ";
+                cin >> count;
+                for (i = 0; i < count && n < 20; i++) {
+                    a[n].read();
+                    n++;
+                }
+                break;
+            }
+
+            case 2:
+                if (n == 0) {
+                    cout << "No records to display.\n";
+                } else {
+                    for (i = 0; i < n; i++) {
+                        a[i].display();
+                    }
+                }
+                break;
+
+            case 3: {
+                int pos;
+                if (n >= 20) {
+                    cout << "List full.\n";
+                    break;
+                }
+                cout << "Enter position (1 to " << n + 1 << ") to insert: ";
+                cin >> pos;
+                if (pos < 1 || pos > n + 1) {
+                    cout << "Invalid position.\n";
+                    break;
+                }
+                for (i = n; i >= pos; i--) {
+                    a[i] = a[i - 1];
+                }
+                a[pos - 1].read();
+                n++;
+                break;
+            }
+
+            case 4: {
+                int rollToDelete;
+                bool found = false;
+                cout << "Enter the Roll Number to delete: ";
+                cin >> rollToDelete;
+
+                for (i = 0; i < n; i++) {
+                    if (a[i].search(rollToDelete)) {
+                        for (int j = i; j < n - 1; j++) {
+                            a[j] = a[j + 1];
+                        }
+                        n--;
+                        cout << "Record deleted.\n";
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    cout << "Roll Number not found.\n";
+                }
+                break;
+            }
+
+            case 5: {
+                int rollno;
+                bool found = false;
+                cout << "Enter Roll Number to update: ";
+                cin >> rollno;
+
+                for (i = 0; i < n; i++) {
+                    if (a[i].search(rollno)) {
+                        cout << "Record found. Updating...\n";
+                        a[i].update();
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    cout << "Record not found.\n";
+                }
+                break;
+            }
+
+            case 6:
+                cout << "Exiting program.\n";
+                break;
+
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+
+    } while (No != 6);
+
+    return 0;
+}

@@ -1,0 +1,190 @@
+#include <iostream>
+using namespace std;
+
+class LinearProbing {
+    int table[6];
+    int size = 6;
+
+public:
+    LinearProbing() {
+        for (int i = 0; i < size; i++)
+            table[i] = -1;
+    }
+
+    int hashFunction(int key) {
+        return key % size;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        int start = index;
+
+        while (table[index] != -1) {
+            index = (index + 1) % size;
+            if (index == start) {
+                cout << "Hash Table Full! Cannot insert " << key << endl;
+                return;
+            }
+        }
+        table[index] = key;
+        cout << "Inserted " << key << " at index " << index << endl;
+    }
+
+    void display() {
+        cout << "\nHash Table (Linear Probing):\n";
+        for (int i = 0; i < size; i++) {
+            if (table[i] == -1)
+                cout << i << " --> [Empty]\n";
+            else
+                cout << i << " --> " << table[i] << "\n";
+        }
+    }
+};
+
+class SeparateChaining {
+    int table[20][5]; 
+    int count[20];    
+    int size = 20;
+
+public:
+    SeparateChaining() {
+        for (int i = 0; i < size; i++) {
+            count[i] = 0;
+            for (int j = 0; j < 5; j++)
+                table[i][j] = -1;
+        }
+    }
+
+    int hashFunction(int key) {
+        return key % size;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        if (count[index] < 5) {
+            table[index][count[index]] = key;
+            count[index]++;
+            cout << "Inserted " << key << " at index " << index << endl;
+        } else {
+            cout << "Chain at index " << index << " is full! Cannot insert " << key << endl;
+        }
+    }
+
+    void display() {
+        cout << "\nHash Table (Separate Chaining using Array):\n";
+        for (int i = 0; i < size; i++) {
+            cout << i << " --> ";
+            for (int j = 0; j < count[i]; j++) {
+                cout << table[i][j] << " -> ";
+            }
+            cout << "NULL\n";
+        }
+    }
+};
+
+class QuadraticProbing {
+    int table[11];
+    int size = 11;
+
+public:
+    QuadraticProbing() {
+        for (int i = 0; i < size; i++)
+            table[i] = -1;
+    }
+
+    int hashFunction(int key) {
+        return key % size;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        int i = 0;
+
+        while (table[(index + i * i) % size] != -1 && i < size) {
+            i++;
+        }
+
+        if (i == size) {
+            cout << "Hash Table Full! Cannot insert " << key << endl;
+            return;
+        }
+
+        int newIndex = (index + i * i) % size;
+        table[newIndex] = key;
+        cout << "Inserted " << key << " at index " << newIndex << endl;
+    }
+
+    void display() {
+        cout << "\nHash Table (Quadratic Probing):\n";
+        for (int i = 0; i < size; i++) {
+            if (table[i] == -1)
+                cout << i << " --> [Empty]\n";
+            else
+                cout << i << " --> " << table[i] << "\n";
+        }
+    }
+};
+
+int main() {
+    int choice;
+
+    do {
+        cout << "\n HASHING TECHNIQUES MENU\n";
+        cout << "1. Linear Probing (Cold Drink Shop)\n";
+        cout << "2. Separate Chaining (Student Marks)\n";
+        cout << "3. Quadratic Probing (Mango Shop)\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1: {
+            LinearProbing lp;
+            int n, key;
+            cout << "Enter number of cold drink flavours: ";
+            cin >> n;
+            for (int i = 0; i < n; i++) {
+                cout << "Enter key " << i + 1 << ": ";
+                cin >> key;
+                lp.insert(key);
+            }
+            lp.display();
+            break;
+        }
+
+        case 2: {
+            SeparateChaining sc;
+            int data[20] = {33, 56, 78, 12, 10, 67, 89, 99, 100, 23,
+                            45, 71, 39, 62, 59, 90, 91, 20, 75, 66};
+            cout << "\nInserting marks of 20 students...\n";
+            for (int i = 0; i < 20; i++)
+                sc.insert(data[i]);
+            sc.display();
+            break;
+        }
+
+        case 3: {
+            QuadraticProbing qp;
+            int n, key;
+            cout << "Enter number of mango varieties : ";
+            cin >> n;
+            for (int i = 0; i < n; i++) {
+                cout << "Enter key " << i + 1 << ": ";
+                cin >> key;
+                qp.insert(key);
+            }
+            qp.display();
+            break;
+        }
+
+        case 4:
+            cout << "Exiting program..\n";
+            break;
+
+        default:
+            cout << "Invalid choice.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}

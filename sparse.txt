@@ -1,0 +1,269 @@
+#include<iostream>
+using namespace std;
+
+class Sparse {
+    public:
+        int spa[100][3], size, rows, cols,trans[100][3];
+        int fastT[100][3];
+
+    Sparse(int r, int c) {
+        rows = r;
+        cols = c;
+    }
+
+    void creatsparse(int mat[100][100], int r, int c) {
+        int count = 0;
+        for (int i = 0; i < r; i++)
+            for (int j = 0; j < c; j++) {
+                if (mat[i][j] != 0) {
+                    count++;
+                }
+            }
+
+        size = 1;
+        spa[0][0] = rows;
+        spa[0][1] = cols;
+        spa[0][2] = count;
+
+        for (int i = 0; i < r; i++)
+            for (int j = 0; j < c; j++) {
+                if (mat[i][j] != 0) {
+                    spa[size][0] = i;
+                    spa[size][1] = j;
+                    spa[size][2] = mat[i][j];
+                    size++;
+                }
+            }
+    }
+
+    void display() {
+        cout << "Row Col Val\n";
+        for (int i = 0; i < size; i++) {
+            cout << spa[i][0] << "   " << spa[i][1] << "   " << spa[i][2] << "\n";
+        }
+    }
+
+    void fasttrans(){
+            int loc;
+            int total[cols]={0};
+            int index[cols+1]={0};
+            index[0]=1;
+            for(int i=1;i<spa[0][2];i++){
+                    total[spa[i][1]]++;
+            }
+        for(int i=1;i<=cols;i++){
+            index[i]=index[i-1]+total[i-1];
+        }
+        fastT[0][0]=cols;
+        fastT[0][1]=rows;
+        fastT[0][2]=size-1;
+        for (int i = 1; i < size; i++) {
+                    loc=index[spa[i][1]];
+                    fastT[loc][0] = spa[i][1];
+                    fastT[loc][1] = spa[i][0];
+                    fastT[loc][2] = spa[i][2];
+                    index[spa[i][1]]++;
+                }
+        cout << "______Fast Transpose Result_______\n";
+        cout << "Row Col Val\n";
+        for (int i = 0; i < size; i++) {
+            cout << fastT[i][0] << "   " << fastT[i][1] << "   " << fastT[i][2] << "\n";
+        }
+
+
+    }
+
+    void transpose() {
+        int  x = 1;
+        trans[0][0] = cols;
+        trans[0][1] = rows;
+        trans[0][2] = size - 1;
+
+        for (int k = 0; k < spa[0][1]; k++) {
+            for (int i = 1; i < size; i++) {
+                if (spa[i][1] == k) {
+                    trans[x][0] = spa[i][1];
+                    trans[x][1] = spa[i][0];
+                    trans[x][2] = spa[i][2];
+                    x++;
+                }
+            }
+        }
+
+        cout << "______Transpose Result_______\n";
+        cout << "Row Col Val\n";
+        for (int i = 0; i < size; i++) {
+            cout << trans[i][0] << "   " << trans[i][1] << "   " << trans [i][2] << "\n";
+        }
+    }
+
+    void add(Sparse &S2) {
+
+        int result[100][3];
+        int i = 1, j = 1, k = 1;
+
+        result[0][0] = rows;
+        result[0][1] = cols;
+
+        while (i < size && j < S2.size) {
+            if (spa[i][0] < S2.spa[j][0] || 
+               (spa[i][0] == S2.spa[j][0] && spa[i][1] < S2.spa[j][1])) {
+                result[k][0] = spa[i][0];
+                result[k][1] = spa[i][1];
+                result[k][2] = spa[i][2];
+                i++;
+                k++;
+            } else if (S2.spa[j][0] < spa[i][0] || 
+                      (S2.spa[j][0] == spa[i][0] && S2.spa[j][1] < spa[i][1])) {
+                result[k][0] = S2.spa[j][0];
+                result[k][1] = S2.spa[j][1];
+                result[k][2] = S2.spa[j][2];
+                j++;
+                k++;
+            } else {
+                int sum = spa[i][2] + S2.spa[j][2];
+                if (sum != 0) {
+                    result[k][0] = spa[i][0];
+                    result[k][1] = spa[i][1];
+                    result[k][2] = sum;
+                    k++;
+                }
+                i++;
+                j++;
+            }
+        }
+
+        while (i < size) {
+            result[k][0] = spa[i][0];
+            result[k][1] = spa[i][1];
+            result[k][2] = spa[i][2];
+            i++;
+            k++;
+        }
+
+        while (j < S2.size) {
+            result[k][0] = S2.spa[j][0];
+            result[k][1] = S2.spa[j][1];
+            result[k][2] = S2.spa[j][2];
+            j++;
+            k++;
+        }
+
+        result[0][2] = k - 1;
+
+        cout << "_______Addition Result_______\n";
+        cout << "Row Col Val\n";
+        for (int m = 0; m < k; m++) {
+            cout << result[m][0] << "   " << result[m][1] << "   " << result[m][2] << "\n";
+        }
+    }  
+        void mul(Sparse &S2) {
+        // if (cols != S2.rows) {
+        //     cout << "Multiplication not Possible\n";
+        //     return;
+        // }
+        S2.transpose();
+
+        int result[100][3];
+        int k = 1;
+        result[0][0] = rows;
+        result[0][1] = S2.cols;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < S2.cols; j++) {
+                int sum = 0;
+                for (int p = 1; p < size; p++) {
+                    if (spa[p][0] == i) {
+                        for (int q = 1; q < S2.size; q++) {
+                            if (S2.trans[q][0] == j && S2.trans[q][1] == spa[p][1]) {
+                                sum += spa[p][2] * S2.trans[q][2];
+                            }
+                        }
+                    }
+                }
+                if (sum != 0) {
+                    result[k][0] = i;
+                    result[k][1] = j;
+                    result[k][2] = sum;
+                    k++;
+                }
+            }
+        }
+
+        result[0][2] = k - 1;
+
+        cout << "_______Multiplication Result_______\n";
+        cout << "Row Col Val\n";
+        for (int m = 0; m < k; m++) {
+            cout << result[m][0] << "   " << result[m][1] << "   " << result[m][2] << "\n";
+        }
+    }
+
+
+};
+
+int main() {
+    int mat1[100][100], mat2[100][100];
+    int row, col,No;
+    cout << "Enter Number of rows : ";
+    cin >> row;
+    cout << "Enter Number of Column : ";
+    cin >> col;
+
+    cout << "Enter 1st Matrix :\n";
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            cin >> mat1[i][j];
+
+    cout << "Enter 2nd Matrix :\n";
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            cin >> mat2[i][j];
+
+    Sparse S1(row, col), S2(row, col);
+
+    S1.creatsparse(mat1, row, col);
+    S2.creatsparse(mat2, row, col);
+    
+    do{
+    cout << "1) Display Matrix\n2)Transpose\n3)Addition \n4)Multi \n5)Fast Transpose\n6) Exit\n";
+    cout << "Enter Choice: ";
+    cin>>No;
+
+    switch (No) {
+            case 1: 
+                cout << "\nSparse 1:\n";
+                S1.display();
+
+                cout << "\nSparse 2:\n";
+                S2.display();
+
+                break;
+
+            case 2:
+                S1.transpose();
+                S2.transpose();
+                break;
+
+            case 3: 
+                S1.add(S2);
+                break;
+            case 4: 
+                S1.mul(S2);
+                break;
+            case 5: 
+            	S1.fasttrans();
+                S2.fasttrans();
+                break;
+            case 6:
+                cout << "Exiting program.\n";
+                break;
+
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+
+    } while (No !=6);
+
+    return 0;
+}

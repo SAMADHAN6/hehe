@@ -1,0 +1,177 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Node
+{
+public:
+    int PRN;
+    string Name;
+    float Marks;
+    Node *next;
+    Node *prev;
+
+    Node(int prn, string name, float marks)
+    {
+        PRN = prn;
+        Name = name;
+        Marks = marks;
+        next = prev = NULL;
+    }
+};
+
+class DLL
+{
+public:
+    Node *head, *tail;
+
+    DLL()
+    {
+        head = tail = NULL;
+    }
+
+    void push_front()
+    {
+        int n, prn;
+        string name;
+        float marks;
+
+        cout << "Enter number of student records to Add: ";
+        cin >> n;
+
+        while (n--)
+        {
+            cout << "Enter PRN: ";
+            cin >> prn;
+            cout << "Enter Name: ";
+            cin >> name;
+            cout << "Enter Marks: ";
+            cin >> marks;
+
+            Node *newnode = new Node(prn, name, marks);
+
+            if (head == NULL)
+            {
+                head = tail = newnode;
+            }
+            else
+            {
+                newnode->next = head;
+                head->prev = newnode;
+                head = newnode;
+            }
+        }
+    }
+
+    void display()
+    {
+        Node *temp = head;
+        cout << "\n-------------------------";
+        cout << "\n| PRN\t| Name\t| Marks |\n";
+        cout << "-------------------------\n";
+        while (temp != NULL)
+        {
+            cout <<"| "<<temp->PRN << "\t" << temp->Name << "\t" << temp->Marks<<"\t|" << "\n";
+            temp = temp->next;
+        }
+        cout << "-------------------------\n";
+    }
+
+    void sortList()
+    {
+        if (head == NULL)
+            return;
+
+        Node *i, *j;
+        for (i = head; i->next != NULL; i = i->next)
+        {
+            for (j = i->next; j != NULL; j = j->next)
+            {
+                if (i->PRN > j->PRN)
+                {
+                    swap(i->PRN, j->PRN);
+                    swap(i->Name, j->Name);
+                    swap(i->Marks, j->Marks);
+                }
+            }
+        }
+    }
+
+    //For merging
+    void insertAtEnd(int prn, string name, float marks)
+    {
+        Node *newnode = new Node(prn, name, marks);
+        if (head == NULL)
+        {
+            head = tail = newnode;
+        }
+        else
+        {
+            tail->next = newnode;
+            newnode->prev = tail;
+            tail = newnode;
+        }
+    }
+
+    void mergeLists(DLL &L1, DLL &L2)
+    {
+        Node *p1 = L1.head;
+        Node *p2 = L2.head;
+
+        while (p1  && p2 )
+        {
+            if (p1->PRN <= p2->PRN)
+            {
+                insertAtEnd(p1->PRN, p1->Name, p1->Marks);
+                p1 = p1->next;
+            }
+            else
+            {
+                insertAtEnd(p2->PRN, p2->Name, p2->Marks);
+                p2 = p2->next;
+            }
+        }
+
+        while (p1)
+        {
+            insertAtEnd(p1->PRN, p1->Name, p1->Marks);
+            p1 = p1->next;
+        }
+        while (p2)
+        {
+            insertAtEnd(p2->PRN, p2->Name, p2->Marks);
+            p2 = p2->next;
+        }
+    }
+};
+
+int main()
+{
+    cout << "\n......... Recruitment Cell: Technical Skill Examination Record...............\n";
+
+    DLL DL1, DL2, DL3;
+
+    cout << "\nEnter Records for List 1:\n";
+    DL1.push_front();
+    cout << "\nList 1 before sorting:";
+    DL1.display();
+
+    cout << "\nList 1 after sorting:";
+    DL1.sortList();
+    DL1.display();
+
+    cout << "\nEnter Records for List 2:\n";
+    DL2.push_front();
+    cout << "\nList 2 before sorting : ";
+    DL2.display();
+
+    cout << "\nList 2 after sorting:";
+    DL2.sortList();
+    DL2.display();
+
+    DL3.mergeLists(DL1, DL2);
+    cout << "\nFinal Merged Sorted List:";
+    DL3.display();
+
+    return 0;
+}

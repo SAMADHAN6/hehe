@@ -1,0 +1,176 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+#define MAX 10
+
+class Dqueue {
+    string customers[MAX];
+    int cus_Id[MAX];
+    int front, rear;
+
+public:
+    Dqueue() {
+        front = rear = -1;
+    }
+
+    bool isFull() {
+        return (front == 0 && rear == MAX - 1) || (front == rear + 1);
+    }
+
+    bool isEmpty() {
+        return (front == -1);
+    }
+
+    void addRear(string name,int C_ID) {
+        if (isFull()) {
+            cout << "Mall Queue is FULL! Please wait.\n";
+            return;
+        }
+        if (front == -1)
+            front = rear = 0;
+        else if (rear == MAX - 1)
+            rear = 0;
+        else
+            rear++;
+
+        customers[rear] = name;
+        cus_Id[rear]= C_ID;
+        cout << name << " entered the mall (Rear Entry).\n";
+    }
+
+    void addFront(string name,int C_ID) {
+        if (isFull()) {
+            cout << "Mall Queue is FULL! Please wait.\n";
+            return;
+        }
+        if (front == -1)
+            front = rear = 0;
+        else if (front == 0)
+            front = MAX - 1;
+        else
+            front--;
+
+        customers[front] = name;
+        cus_Id[rear]= C_ID;
+        cout << name << " entered the mall (Front/VIP Entry).\n";
+    }
+
+    void exitFront() {
+        if (isEmpty()) {
+            cout << "No customers to exit!\n";
+            return;
+        }
+        cout << customers[front] << " exited the mall (Main Exit).\n";
+        if (front == rear)
+            front = rear = -1;
+        else if (front == MAX - 1)
+            front = 0;
+        else
+            front++;
+    }
+
+    void exitRear() {
+        if (isEmpty()) {
+            cout << "No customers to exit!\n";
+            return;
+        }
+        cout << customers[rear] << " exited the mall (Emergency Exit).\n";
+        if (front == rear)
+            front = rear = -1;
+        else if (rear == 0)
+            rear = MAX - 1;
+        else
+            rear--;
+    }
+
+    void showQueue() {
+        if (isEmpty()) {
+            cout << "Mall is currently empty.\n";
+            return;
+        }
+
+        cout << "\nCurrent Customers in Mall Queue:\n";
+        int i = front;
+        while (true) {
+            cout << " -> " << customers[i];
+            if (i == rear)
+                break;
+            i = (i + 1) % MAX;
+        }
+        cout << "\n";
+    }
+};
+
+
+
+int main() {
+    Dqueue mall;
+    int choice, type;
+    string name;
+
+    cout << "==============================\n";
+    cout << "  Shopping Mall Queue System\n";
+    cout << "==============================\n";
+    cout << "Select Mall Queue Type:\n";
+    cout << "1. Input Restricted (Entry only from rear)\n";
+    cout << "2. Output Restricted (Exit only from front)\n";
+    cout << "Enter type: ";
+    cin >> type;
+
+    do {
+        cout << "\n--------- MENU ---------\n";
+        cout << "1. Add Customer at Front\n";
+        cout << "2. Add Customer at Rear\n";
+        cout << "3. Remove Customer from Front\n";
+        cout << "4. Remove Customer from Rear\n";
+        cout << "5. Show Current Queue\n";
+        cout << "6. Exit Program\n";
+        cout << "------------------------\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            if (type == 1)
+                cout << "Front entry not allowed in Input Restricted Queue!\n";
+            else {
+                cout << "Enter Customer Name: ";
+                cin >> name;
+                mall.addFront(name);
+            }
+            break;
+
+        case 2:
+            cout << "Enter Customer Name: ";
+            cin >> name;
+            mall.addRear(name);
+            break;
+
+        case 3:
+            mall.exitFront();
+            break;
+
+        case 4:
+            if (type == 2)
+                cout << "Rear exit not allowed in Output Restricted Queue!\n";
+            else
+                mall.exitRear();
+            break;
+
+        case 5:
+            mall.showQueue();
+            break;
+
+        case 6:
+            cout << "Exiting Mall Queue System...\n";
+            break;
+
+        default:
+            cout << "Invalid Choice!\n";
+        }
+
+    } while (choice != 6);
+
+    return 0;
+}

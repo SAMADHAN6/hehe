@@ -1,0 +1,165 @@
+#include<iostream>
+using namespace std;
+
+class node{
+    public:
+    int val;
+    node* next ;
+
+    node (int v){
+        val = v;
+        next =NULL;
+
+    }
+};
+
+class cll{
+
+    public:
+    node* head = NULL;
+    // node* tail = NULL;
+
+    void insertathead(){
+        cout << "enter the num :\n";
+        int v;
+
+        cin >> v;
+
+        node* newnode= new node(v);
+
+        if (head ==NULL){
+            head = newnode;
+            newnode -> next = head;
+        }else{
+            node* t = head;
+            while(t->next != head){
+                t= t->next;
+            }
+            t->next = newnode;
+            newnode->next =head;
+            head = newnode;
+
+        }
+
+    }
+
+    void insertatend(){
+        cout << "enter the num :\n";
+        int v;
+
+        cin >> v;
+        node* newnode= new node(v);
+
+        if (head ==NULL){
+            head  = newnode;
+            newnode->next = head;
+        }else{
+            node* t = head ;
+            while(t->next !=head){
+                t = t->next ;
+            }
+            t->next = newnode;
+            newnode->next = head ;
+            
+
+        }
+
+    }
+
+    void display(){
+        if (head ==NULL){
+            cout << "list is empty\n";
+        }else{
+
+            cout << head->val<<"--->";
+            node* t = head->next ;
+            while(t!=head){
+                cout << t->val<<"--->";
+                t = t->next ;
+            }
+
+
+            cout << "\n";
+            
+            
+
+
+        }
+
+    }
+
+    void delhead() {
+    if (head == NULL) {
+        cout << "Nothing to delete\n";
+        return;
+    }
+
+    
+    if (head->next == head) {
+        delete head;
+        head = NULL;
+        return;
+    }
+
+    
+    node* last = head;
+
+    
+    while (last->next != head) {
+        last = last->next;
+    }
+
+    node* oldHead = head;
+    head = head->next;     
+    last->next = head;     
+
+    delete oldHead;        
+}
+
+void delend(){
+
+if (head == NULL) {
+        cout << "Nothing to delete\n";
+        return;
+    }
+
+    
+    if (head->next == head) {
+        delete head;
+        head = NULL;
+        return;
+    }
+
+    
+    node* last = head;
+
+    
+    while (last->next->next != head) {
+        last = last->next;
+    }
+    last ->next = head;
+
+
+           
+}
+
+
+};
+
+int main(){
+    cll l;
+    l.insertathead();
+    l.insertathead();
+    l.insertatend();
+
+    l.display();
+
+    l.delhead();
+    l.delend();
+    l.display();
+
+
+    return 0;
+
+
+}

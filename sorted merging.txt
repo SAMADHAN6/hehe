@@ -1,0 +1,169 @@
+
+#include<iostream>
+using namespace std;
+
+class node {
+public:
+    int val;
+    node* next;
+    node* prev;
+    node(int v) { val = v; next = NULL; prev = NULL; }
+};
+
+class dll {
+public:
+    node* head = NULL;
+
+    void insertathead() {
+        int v; cin >> v;
+        node* n = new node(v);
+        if (!head) { head = n; return; }
+        n->next = head;
+        head->prev = n;
+        head = n;
+    }
+
+    void insertatend() {
+        int v; cin >> v;
+        node* n = new node(v);
+        if (!head) { head = n; return; }
+        node* t = head;
+        while (t->next) t = t->next;
+        t->next = n;
+        n->prev = t;
+    }
+
+    void insertafterelement() {
+        int key, v;
+        cin >> key >> v;
+        node* t = head;
+        while (t && t->val != key) t = t->next;
+        if (!t) return;
+        node* n = new node(v);
+        n->next = t->next;
+        n->prev = t;
+        if (t->next) t->next->prev = n;
+        t->next = n;
+    }
+
+    void insertatposition() {
+        int pos, v;
+        cin >> pos >> v;
+        if (pos <= 1) {
+            node* n = new node(v);
+            if (head) {
+                n->next = head;
+                head->prev = n;
+            }
+            head = n;
+            return;
+        }
+        node* t = head;
+        for (int i = 1; i < pos - 1 && t; i++) t = t->next;
+        if (!t) return;
+        node* n = new node(v);
+        n->next = t->next;
+        n->prev = t;
+        if (t->next) t->next->prev = n;
+        t->next = n;
+    }
+
+    void display() {
+        node* t = head;
+        while (t) { cout << t->val << "<-->"; t = t->next; }
+        cout << "NULL\n";
+    }
+
+    void delhead() {
+        if (!head) return;
+        node* t = head;
+        head = head->next;
+        if (head) head->prev = NULL;
+        delete t;
+    }
+
+    void delend() {
+        if (!head) return;
+        if (!head->next) { delete head; head = NULL; return; }
+        node* t = head;
+        while (t->next) t = t->next;
+        t->prev->next = NULL;
+        delete t;
+    }
+
+    void reverse() {
+        node* cur = head;
+        node* temp = NULL;
+        while (cur) {
+            temp = cur->prev;
+            cur->prev = cur->next;
+            cur->next = temp;
+            cur = cur->prev;
+        }
+        if (temp) head = temp->prev;
+    }
+
+    node* mergeTwoSortedLists(node* a, node* b) {
+        if (!a) return b;
+        if (!b) return a;
+        node* d = new node(-1);
+        node* t = d;
+        while (a && b) {
+            if (a->val <= b->val) { t->next = a; a->prev = t; a = a->next; }
+            else { t->next = b; b->prev = t; b = b->next; }
+            t = t->next;
+        }
+        if (a) { t->next = a; a->prev = t; }
+        if (b) { t->next = b; b->prev = t; }
+        node* h = d->next;
+        if (h) h->prev = NULL;
+        delete d;
+        return h;
+    }
+
+    void mergeWith(dll &other) {
+        head = mergeTwoSortedLists(head, other.head);
+    }
+
+    void sortlist() {
+        if (!head || !head->next) return;
+        node* i = head;
+        while (i) {
+            node* j = i->next;
+            while (j) {
+                if (i->val > j->val) {
+                    int temp = i->val;
+                    i->val = j->val;
+                    j->val = temp;
+                }
+                j = j->next;
+            }
+            i = i->next;
+        }
+    }
+};
+
+int main() {
+    dll d1, d2;
+
+    d1.insertatend();
+    d1.insertatend();
+    d1.insertatend();
+
+    d2.insertatend();
+    d2.insertatend();
+    d2.insertatend();
+
+    d1.display();
+    d2.display();
+
+    d1.mergeWith(d2);
+    d1.display();
+
+    d1.insertatposition();
+    d1.insertafterelement();
+    d1.sortlist();
+    d1.display();
+
+    return 0;
+}

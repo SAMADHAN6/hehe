@@ -1,0 +1,319 @@
+
+#include <iostream>
+using namespace std;
+class TYBTECHINFO
+{
+public:
+    int PRN;
+    float sgpa;
+    string F_name;
+    string branch;
+    void read()
+    {
+        cout << "Enter PRN of Student : ";
+        cin >> PRN;
+        cout << "Enter SGPA of Student : ";
+        cin >> sgpa;
+        cout << "Enter First name of Student : ";
+        cin >> F_name;
+        cout << "Enter branch of student : ";
+        cin >> branch;
+    }
+    void show()
+    {
+        cout << "PRN is : " << PRN << endl;
+        cout << "First Name is : " << F_name << endl;
+        cout << "SGPA : " << sgpa << endl;
+        cout << "Branch of Student : " << branch << endl;
+        cout << "_____________________________________" << endl;
+    }
+};
+class Operations
+{
+public:
+    void bubbleSort(TYBTECHINFO list[], int n)
+    {
+        for (int i = 0; i < n - 1; i++)
+        {
+            for (int j = 0; j < n - i - 1; j++)
+            {
+                if (list[j].PRN > list[j + 1].PRN)
+                    swap(list[j], list[j + 1]);
+            }
+        }
+        cout << "List arranged by Roll Number (Ascending):" << endl;
+        display(list, n);
+    }
+
+    void insertionSort(TYBTECHINFO list[], int n)
+    {
+        for (int i = 1; i < n; i++)
+        {
+            TYBTECHINFO key = list[i];
+            int j = i - 1;
+            while (j >= 0 && list[j].F_name > key.F_name)
+            {
+                list[j + 1] = list[j];
+                j--;
+            }
+            list[j + 1] = key;
+        }
+        cout << endl
+             << "List arranged Alphabetically by Name:\n";
+        display(list, n);
+    }
+
+    int partition(TYBTECHINFO list[], int low, int high)
+    {
+        float pivot = list[high].sgpa;
+        int i = low - 1;
+        for (int j = low; j < high; j++)
+        {
+            if (list[j].sgpa > pivot) 
+            {
+                i++;
+                swap(list[i], list[j]);
+            }
+        }
+        swap(list[i + 1], list[high]);
+        return i + 1;
+    }
+
+    void quickSort(TYBTECHINFO list[], int low, int high)
+    {
+        if (low < high)
+        {
+            int pi = partition(list, low, high);
+            quickSort(list, low, pi - 1);
+            quickSort(list, pi + 1, high);
+        }
+    }
+
+    void showToppers(TYBTECHINFO list[], int n)
+    {
+        quickSort(list, 0, n - 1);
+        cout << "Top 10 Toppers (by SGPA):" << endl;
+        int limit = min(n, 10);
+        for (int i = 0; i < limit; i++)
+        {
+            cout << i + 1 << " )" << endl;
+            list[i].show();
+        }
+    }
+
+    void linersearch(TYBTECHINFO list[], int n)
+    {
+        int find;
+        cout << "Enter SGPA to find Student with same sgpa : ";
+        cin >> find;
+        bool flag = false;
+        cout << "\nStudent with SGPA " << find << " -> \n";
+        for (int i = 0; i < n; i++)
+        {
+            if (list[i].sgpa == find)
+            {
+                list[i].show();
+                flag = true;
+            }
+        }
+        if (!flag)
+            cout << "Student with " << find << " SGPA Not found in list.\n";
+    }
+
+    void binarysearch(TYBTECHINFO list[], int n)
+    {
+        string key;
+        cout << "Enter Name to search: ";
+        cin >> key;
+        insertionSort(list, n);
+        int low = 0, high = n - 1;
+        bool found = false;
+        while (low <= high)
+        {
+            int mid = (low + high) / 2;
+            if (list[mid].F_name == key)
+            {
+                cout << "Record found for name : " << key << endl;
+                list[mid].show();
+                found = true;
+                break;
+            }
+            else if (list[mid].F_name < key)
+                low = mid + 1;
+            else
+                high = mid - 1;
+        }
+        if (!found)
+            cout << "No student found with the name '" << key << "'" << endl;
+    }
+
+    void fibonnacisearch(TYBTECHINFO list[], int n)
+    {
+        string dept;
+        cout << "Enter Department name to check (e.g, COMP,AI,DS,IT,ENTC...): ";
+        cin >> dept;
+
+        for (int i = 1; i < n; i++)
+        {
+            TYBTECHINFO temp = list[i];
+            int j = i - 1;
+            while (j >= 0 && list[j].branch > temp.branch)
+            {
+                list[j + 1] = list[j];
+                j--;
+            }
+            list[j + 1] = temp;
+        }
+
+        int fibm2 = 0;         
+        int fibm1 = 1;            
+        int fibm = fibm1 + fibm2; 
+
+        while (fibm < n)
+        {
+            fibm2 = fibm1;
+            fibm1 = fibm;
+            fibm = fibm1 + fibm2;
+        }
+
+        int offset = -1;
+
+        while (fibm > 1)
+        {
+            int i = min(offset + fibm2, n - 1);
+
+            if (list[i].branch < dept)
+            {
+                fibm = fibm1;
+                fibm1 = fibm2;
+                fibm2 = fibm - fibm1;
+                offset = i;
+            }
+            else if (list[i].branch > dept)
+            {
+                fibm = fibm2;
+                fibm1 = fibm1 - fibm2;
+                fibm2 = fibm - fibm1;
+            }
+            else
+            {
+                cout << "\nStudents belonging to department " << dept << " :\n";
+                list[i].show();
+                return;
+            }
+        }
+
+        if (fibm1 && list[offset + 1].branch == dept)
+        {
+            cout << "Students belonging to department " << dept << " :\n";
+            list[offset + 1].show();
+            return;
+        }
+
+        cout << "No student found in department " << dept << ".\n";
+    }
+
+    void display(TYBTECHINFO list[], int n)
+    {
+        cout << "___________________________________" << endl;
+        for (int i = 0; i < n; i++)
+        {
+            list[i].show();
+        }
+    }
+};
+
+int main()
+{
+    int n;
+    cout << "Enter the number of Student in TY B-tech : ";
+    cin >> n;
+    TYBTECHINFO list1[n];
+    Operations op;
+    cout << "....................Enter Students Information...........  " << endl;
+    cout << "NOTE : Start Name/Branch  with capital letter , 0<sgpa<=10, Department name as COMP,AI,DS,IT,ENTC..." << endl
+         << endl;
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Enter Student " << i + 1 << " Information : " << endl;
+        list1[i].read();
+    }
+    int choice,choice1,choice2;
+    do
+    {   cout<<"\n1.Display Student List\n2.Sorting\n3.Searching\n4.Exit\n";
+        cout << "Enter choice : ";
+        cin >> choice;
+        switch (choice)
+        {
+     case 1:
+            cout << "Student information in system -> " << endl
+                 << endl;
+            cout << "____________________________________" << endl;
+            for (int i = 0; i < n; i++)
+            {
+                cout << "Student " << i + 1 << " Information : " << endl;
+                list1[i].show();
+            }
+     break;
+            
+     case 2 :
+     	do{
+      	cout<<"\n1.Bubble Sort(to roll number)\n2.Insertion sort( Arrange list of students alphabetically)\n3.Quick sort(Arrange list of students to find out first ten toppers from a class)\n4.Exit Sorting\n";
+      	cout<<"Enter Choice : ";
+      	cin>>choice1;
+     	switch(choice1){
+        		case 1:
+            	op.bubbleSort(list1, n);
+            	break;
+        		case 2:
+            	op.insertionSort(list1, n);
+            	break;
+        		case 3:
+            	op.showToppers(list1, n);
+            	break;
+        		case 4: 
+        	  	cout<<"\nExiting Sorting....\n";
+            	break;
+            	default:
+            	cout << "Enter correct choice..\n";
+            	break;
+     		}
+		}while(choice1!=4);
+	break;
+	
+     case 3 :
+     	do{
+     	cout<<"\n1.Linear Search\n2.Binary Search\n3.Fiibonacci Search\n4.Exit Searching\n";
+     	cout<<"Enter Choice : ";
+     	cin>>choice2;
+     	switch(choice2){
+        		case 1:
+            	op.linersearch(list1, n);
+            	break;
+        		case 2:
+            	op.binarysearch(list1, n);
+            	break;
+        		case 3:
+            	op.fibonnacisearch(list1, n);
+            	break;
+        		case 4: 
+        	  	cout<<"\nExiting Searching....\n";
+            	break;
+        		default:
+            	cout << "Enter correct choice..\n";
+            	break;
+     		}
+		}while(choice2!=4);
+	break;
+	
+     case 4:
+          cout << "Program ended...\n" << endl;
+     break;
+     
+     default:
+     cout << "Enter correct choice.........\n";
+     break;
+        }
+    } while (choice != 4);
+    return 0;
+}

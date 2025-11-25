@@ -1,0 +1,69 @@
+#include <iostream>
+using namespace std;
+
+#define N 4
+
+void printGrid(int a[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++)
+            cout << a[i][j] << " ";
+        cout << endl;
+    }
+}
+
+bool isSafe(int a[N][N], int r, int c, int n) {
+    for (int i = 0; i < N; i++)
+        if (a[r][i] == n)
+            return false;
+
+    for (int i = 0; i < N; i++)
+        if (a[i][c] == n)
+            return false;
+
+    int sr = r - r % 2;
+    int sc = c - c % 2;
+
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++)
+            if (a[sr + i][sc + j] == n)
+                return false;
+
+    return true;
+}
+
+bool solve(int a[N][N], int r, int c) {
+    if (r == N - 1 && c == N)
+        return true;
+
+    if (c == N)
+        return solve(a, r + 1, 0);
+
+    if (a[r][c] != 0)
+        return solve(a, r, c + 1);
+
+    for (int n = 1; n <= N; n++) {
+        if (isSafe(a, r, c, n)) {
+            a[r][c] = n;
+            if (solve(a, r, c + 1))
+                return true;
+        }
+        a[r][c] = 0;
+    }
+
+    return false;
+}
+
+int main() {
+    int a[N][N];
+
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+            cin >> a[i][j];
+
+    if (solve(a, 0, 0))
+        printGrid(a);
+    else
+        cout << "No solution";
+
+    return 0;
+}

@@ -1,0 +1,91 @@
+#include <iostream>
+using namespace std;
+
+#define MAX 10
+
+class Deque {
+public:
+    int a[MAX];
+    int front, rear;
+
+    Deque() {
+        front = rear = -1;
+    }
+
+    bool isFull() {
+        return (front == 0 && rear == MAX - 1) || (front == rear + 1);
+    }
+
+    bool isEmpty() {
+        return front == -1;
+    }
+
+    void insertRear(int x) {
+        if (isFull()) return;
+        if (front == -1) front = rear = 0;
+        else if (rear == MAX - 1) rear = 0;
+        else rear++;
+        a[rear] = x;
+    }
+
+    void insertFront(int x) {
+        if (isFull()) return;
+        if (front == -1) front = rear = 0;
+        else if (front == 0) front = MAX - 1;
+        else front--;
+        a[front] = x;
+    }
+
+    void deleteFront() {
+        if (isEmpty()) return;
+        if (front == rear) front = rear = -1;
+        else if (front == MAX - 1) front = 0;
+        else front++;
+    }
+
+    void deleteRear() {
+        if (isEmpty()) return;
+        if (front == rear) front = rear = -1;
+        else if (rear == 0) rear = MAX - 1;
+        else rear--;
+    }
+
+    void display() {
+        if (isEmpty()) return;
+        int i = front;
+        while (true) {
+            cout << a[i] << " ";
+            if (i == rear) break;
+            i = (i + 1) % MAX;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    Deque d;
+    int ch, type, x;
+
+    cout << "1 Input Restricted\n2 Output Restricted\n";
+    cin >> type;
+
+    do {
+        cin >> ch;
+
+        if (type == 1) {
+            if (ch == 1) cin >> x, d.insertRear(x);
+            else if (ch == 2) d.deleteFront();
+            else if (ch == 3) d.deleteRear();
+            else if (ch == 4) d.display();
+        }
+        else if (type == 2) {
+            if (ch == 1) cin >> x, d.insertFront(x);
+            if (ch == 2) cin >> x, d.insertRear(x);
+            if (ch == 3) d.deleteFront();
+            if (ch == 4) d.display();
+        }
+
+    } while (ch != 5);
+
+    return 0;
+}

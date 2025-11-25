@@ -1,0 +1,213 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Node {
+public:
+    string name, source, destination;
+    int age, trainNo, seatNo;
+    Node *next;
+
+    Node(string n, int a, int t, int s, string src, string dest) {
+        name = n;
+        age = a;
+        trainNo = t;
+        seatNo = s;
+        source = src;
+        destination = dest;
+        next = NULL;
+    }
+};
+
+class RailwayList {
+    Node *head;
+
+public:
+    RailwayList() {
+        head = NULL;
+    }
+
+    // INSERT PASSENGER
+    void insertPassenger() {
+        string name, source, destination;
+        int age, trainNo, seatNo;
+
+        cout << "Enter Passenger Name: ";
+        cin >> name;
+        cout << "Enter Age: ";
+        cin >> age;
+        cout << "Enter Train Number: ";
+        cin >> trainNo;
+        cout << "Enter Seat Number: ";
+        cin >> seatNo;
+        cout << "Enter Source: ";
+        cin >> source;
+        cout << "Enter Destination: ";
+        cin >> destination;
+
+        Node *newNode = new Node(name, age, trainNo, seatNo, source, destination);
+
+        if (head == NULL)
+            head = newNode;
+        else {
+            Node *temp = head;
+            while (temp->next != NULL)
+                temp = temp->next;
+            temp->next = newNode;
+        }
+
+        cout << "\nTicket Booked Successfully!\n";
+    }
+
+    // DISPLAY ALL PASSENGERS
+    void displayPassengers() {
+        if (head == NULL) {
+            cout << "No Reservations Found!\n";
+            return;
+        }
+
+        Node *temp = head;
+        cout << "\n--- Railway Reservation List ---\n";
+        while (temp != NULL) {
+            cout << "Name: " << temp->name
+                 << " | Age: " << temp->age
+                 << " | Train: " << temp->trainNo
+                 << " | Seat: " << temp->seatNo
+                 << " | From: " << temp->source
+                 << " | To: " << temp->destination << endl;
+
+            temp = temp->next;
+        }
+    }
+
+    // SEARCH PASSENGER (BY SEAT NO)
+    void searchPassenger() {
+        int s;
+        cout << "Enter Seat Number to Search: ";
+        cin >> s;
+
+        Node *temp = head;
+        while (temp != NULL) {
+            if (temp->seatNo == s) {
+                cout << "\nPassenger Found!\n";
+                cout << "Name: " << temp->name
+                     << " | Age: " << temp->age
+                     << " | Train: " << temp->trainNo
+                     << " | From: " << temp->source
+                     << " | To: " << temp->destination << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Record Not Found!\n";
+    }
+
+    // UPDATE PASSENGER
+    void updatePassenger() {
+        int s;
+        cout << "Enter Seat Number to Update: ";
+        cin >> s;
+
+        Node *temp = head;
+        while (temp != NULL) {
+            if (temp->seatNo == s) {
+                cout << "Enter New Name: ";
+                cin >> temp->name;
+                cout << "Enter New Age: ";
+                cin >> temp->age;
+                cout << "Enter New Train Number: ";
+                cin >> temp->trainNo;
+                cout << "Enter New Source: ";
+                cin >> temp->source;
+                cout << "Enter New Destination: ";
+                cin >> temp->destination;
+
+                cout << "Record Updated Successfully!\n";
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Seat Number Not Found!\n";
+    }
+
+    // DELETE PASSENGER
+    void deletePassenger() {
+        int s;
+        cout << "Enter Seat Number to Delete: ";
+        cin >> s;
+
+        if (head == NULL) {
+            cout << "List Empty!\n";
+            return;
+        }
+
+        if (head->seatNo == s) {
+            Node *del = head;
+            head = head->next;
+            delete del;
+            cout << "Record Deleted!\n";
+            return;
+        }
+
+        Node *temp = head;
+        while (temp->next != NULL && temp->next->seatNo != s)
+            temp = temp->next;
+
+        if (temp->next == NULL) {
+            cout << "Record Not Found!\n";
+            return;
+        }
+
+        Node *del = temp->next;
+        temp->next = del->next;
+        delete del;
+        cout << "Record Deleted!\n";
+    }
+
+    // SORT PASSENGERS BY SEAT NUMBER
+    void sortPassengers() {
+        if (!head || !head->next) return;
+
+        for (Node *i = head; i != NULL; i = i->next)
+            for (Node *j = i->next; j != NULL; j = j->next)
+                if (i->seatNo > j->seatNo) {
+                    swap(i->name, j->name);
+                    swap(i->age, j->age);
+                    swap(i->trainNo, j->trainNo);
+                    swap(i->seatNo, j->seatNo);
+                    swap(i->source, j->source);
+                    swap(i->destination, j->destination);
+                }
+
+        cout << "Sorted by Seat Number!\n";
+    }
+};
+
+int main() {
+    RailwayList r;
+    int choice;
+
+    while (true) {
+        cout << "\n--- Railway Reservation System ---\n";
+        cout << "1. Book Ticket (Insert)\n";
+        cout << "2. Show All Reservations\n";
+        cout << "3. Search Passenger\n";
+        cout << "4. Update Passenger\n";
+        cout << "5. Cancel Ticket (Delete)\n";
+        cout << "6. Sort by Seat Number\n";
+        cout << "7. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1: r.insertPassenger(); break;
+        case 2: r.displayPassengers(); break;
+        case 3: r.searchPassenger(); break;
+        case 4: r.updatePassenger(); break;
+        case 5: r.deletePassenger(); break;
+        case 6: r.sortPassengers(); break;
+        case 7: return 0;
+        default: cout << "Invalid Choice!\n";
+        }
+    }
+}

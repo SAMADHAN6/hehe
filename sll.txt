@@ -1,0 +1,156 @@
+#include<iostream>
+using namespace std;
+
+class node {
+public:
+    int val;
+    node* next;
+    node(int v) { val = v; next = NULL; }
+};
+
+class sll {
+public:
+    node* head = NULL;
+
+    void insertathead() {
+        int v; cin >> v;
+        node* n = new node(v);
+        n->next = head;
+        head = n;
+    }
+
+    void insertatend() {
+        int v; cin >> v;
+        node* n = new node(v);
+        if (!head) { head = n; return; }
+        node* t = head;
+        while (t->next) t = t->next;
+        t->next = n;
+    }
+
+    void insertafterelement() {
+        int key, v;
+        cin >> key >> v;
+        node* t = head;
+        while (t && t->val != key) t = t->next;
+        if (!t) return;
+        node* n = new node(v);
+        n->next = t->next;
+        t->next = n;
+    }
+
+    void insertatposition() {
+        int pos, v;
+        cin >> pos >> v;
+        if (pos <= 1) {
+            node* n = new node(v);
+            n->next = head;
+            head = n;
+            return;
+        }
+        node* t = head;
+        for (int i = 1; i < pos - 1 && t; i++) t = t->next;
+        if (!t) return;
+        node* n = new node(v);
+        n->next = t->next;
+        t->next = n;
+    }
+
+    void display() {
+        node* t = head;
+        while (t) { cout << t->val << "--->"; t = t->next; }
+        cout << "NULL\n";
+    }
+
+    void delhead() {
+        if (!head) return;
+        node* t = head;
+        head = head->next;
+        delete t;
+    }
+
+    void delend() {
+        if (!head) return;
+        if (!head->next) { delete head; head = NULL; return; }
+        node* t = head;
+        while (t->next->next) t = t->next;
+        delete t->next;
+        t->next = NULL;
+    }
+
+    void reverse() {
+        node* prev = NULL;
+        node* cur = head;
+        node* nxt;
+        while (cur) {
+            nxt = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = nxt;
+        }
+        head = prev;
+    }
+
+    node* mergeTwoSortedLists(node* a, node* b) {
+        if (!a) return b;
+        if (!b) return a;
+        node* d = new node(-1);
+        node* t = d;
+        while (a && b) {
+            if (a->val <= b->val) { t->next = a; a = a->next; }
+            else { t->next = b; b = b->next; }
+            t = t->next;
+        }
+        if (a) t->next = a;
+        if (b) t->next = b;
+        node* h = d->next;
+        delete d;
+        return h;
+    }
+
+    void mergeWith(sll &other) {
+        head = mergeTwoSortedLists(head, other.head);
+    }
+
+    void sortlist() {
+        if (!head || !head->next) return;
+        node* i = head;
+        while (i) {
+            node* j = i->next;
+            while (j) {
+                if (i->val > j->val) {
+                    int temp = i->val;
+                    i->val = j->val;
+                    j->val = temp;
+                }
+                j = j->next;
+            }
+            i = i->next;
+        }
+    }
+};
+
+int main() {
+    sll l1, l2;
+
+    l1.insertatend();
+    l1.insertatend();
+    l1.insertatend();
+
+    l2.insertatend();
+    l2.insertatend();
+    l2.insertatend();
+
+    l1.display();
+    l2.display();
+
+    l1.mergeWith(l2);
+    l1.display();
+
+    l1.insertatposition();
+    l1.insertafterelement();
+    l1.sortlist();
+    l1.display();
+
+    return 0;
+}

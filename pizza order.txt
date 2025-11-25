@@ -1,0 +1,123 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int orderNo;
+    Node *next;
+
+    Node(int o) {
+        orderNo = o;
+        next = NULL;
+    }
+};
+
+class PizzaParlor {
+    Node *rear;
+    int count, maxOrders;
+
+public:
+    PizzaParlor(int m) {
+        rear = NULL;
+        count = 0;
+        maxOrders = m;
+    }
+
+    void placeOrder(int orderNo) {
+        if (count == maxOrders) {
+            cout << "Order limit reached! Cannot place more orders.\n";
+            return;
+        }
+
+        Node *newNode = new Node(orderNo);
+
+        if (rear == NULL) { // first order
+            rear = newNode;
+            rear->next = rear;
+        } else {
+            newNode->next = rear->next;
+            rear->next = newNode;
+            rear = newNode;
+        }
+
+        count++;
+        cout << "Order " << orderNo << " placed successfully!\n";
+    }
+
+    void serveOrder() {
+        if (rear == NULL) {
+            cout << "No orders to serve.\n";
+            return;
+        }
+
+        Node *front = rear->next;
+
+        cout << "Serving Order: " << front->orderNo << endl;
+
+        if (rear == front) {  
+            rear = NULL;       
+        } else {
+            rear->next = front->next;
+        }
+
+        delete front;
+        count--;
+    }
+
+    void displayOrders() {
+        if (!rear) {
+            cout << "No orders pending.\n";
+            return;
+        }
+
+        Node *temp = rear->next;
+        cout << "Pending Orders: ";
+        do {
+            cout << temp->orderNo << " ";
+            temp = temp->next;
+        } while (temp != rear->next);
+
+        cout << endl;
+    }
+};
+
+int main() {
+    int m;
+    cout << "Enter maximum number of orders (M): ";
+    cin >> m;
+
+    PizzaParlor p(m);
+
+    int choice, orderNo;
+
+    do {
+        cout << "\n--- Pizza Parlor Menu ---\n";
+        cout << "1. Place Order\n";
+        cout << "2. Serve Order\n";
+        cout << "3. Display Orders\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter Order Number: ";
+            cin >> orderNo;
+            p.placeOrder(orderNo);
+            break;
+        case 2:
+            p.serveOrder();
+            break;
+        case 3:
+            p.displayOrders();
+            break;
+        case 4:
+            cout << "Exiting...\n";
+            break;
+        default:
+            cout << "Invalid Option!\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
